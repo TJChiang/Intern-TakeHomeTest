@@ -1,15 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
 const Home = require("./controllers/home");
-const RateLimit = require("./middlewares/Rate-Limit");
+const middlewareRateLimit = require("./middlewares/Rate-Limit");
 
 const app = express();
 
+/**
+ * Express 設置
+ */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(RateLimit);
+/**
+ * Middleware
+ */
+app.use(middlewareRateLimit);
+
+/**
+ * HTTP Route
+ */
 app.get("/", Home);
 
 app.listen(8080, () => {
