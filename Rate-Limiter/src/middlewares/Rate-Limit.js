@@ -7,12 +7,6 @@ const REQUEST_LIMIT = 1000;
 const DURATION = 3600000;   // millisecond
 const client = redis.createClient({ REDIS_HOST, REDIS_PORT });
 
-let RateLimitData = {
-    ip,
-    count,
-    resetTime
-};
-
 client.on("connect", () => {
     console.log("Redis client connected");
 });
@@ -46,6 +40,8 @@ module.exports = async (req, res, next) => {
 };
 
 function getDatabyIp(ip) {
+    let RateLimitData = {};
+
     return new Promise((resolve, reject) => {
         client.hgetall(ip, (err, result) => {
             if (err) {
@@ -69,8 +65,8 @@ function setDatabyIp(ip, data) {
         const resetTime = data.resetTime;
 
         client.hset(ip, "ip", data.ip);
-        client.hset(ip, "count", data.count);
-        client.hset(ip, "resetTime", resetTime);
+        client.hset(ip, "count", data.count.toString());
+        client.hset(ip, "resetTime", resetTime.toString());
 
         client.expireat(ip, Math.floor(resetTime / 1000));
 
